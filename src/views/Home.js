@@ -1,7 +1,7 @@
 import React from 'react';
 import MediaTable from '../components/MediaTable'
 
-const Home = (props) => {
+const Home = () => {
   return (
     <>
       <h1>Home</h1>

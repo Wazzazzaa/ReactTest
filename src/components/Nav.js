@@ -1,18 +1,54 @@
-import React from 'react';
-import {Link} from 'react-router-dom'
-const Nav = () => {
+import React, {useContext, useEffect} from 'react';
+import {Link} from 'react-router-dom';
+import {checkToken} from '../hooks/ApiHooks';
+import {withRouter} from 'react-router-dom';
+import PropTypes from 'prop-types';
+import {MediaContext} from '../Contexts/MediaContext';
+
+const Nav = ({history}) => {
+  const [user, setUser] = useContext(MediaContext);
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const userdata = await checkToken(localStorage.getItem('token'));
+        console.log(userdata);
+        setUser(userdata);
+      } catch (e) {
+        // send to login
+        history.push('/home');
+      }
+    };
+
+    checkUser();
+  }, [history, setUser]);
+
   return (
     <nav>
       <ul>
         <li>
-          <Link to="/">Home</Link>
+          <Link to="/home">Home</Link>
         </li>
-        <li>
-          <Link to="/Profile">Profile</Link>
-        </li>
+        {user === null ?
+          <li>
+            <Link to="/">Login</Link>
+          </li> :
+          <>
+            <li>
+              <Link to="/profile">Profile</Link>
+            </li>
+            <li>
+              <Link to="/logout">Logout</Link>
+            </li>
+          </>
+        }
       </ul>
     </nav>
   );
 };
 
-export default Nav;
+Nav.propTypes = {
+  history: PropTypes.object,
+};
+
+
+export default withRouter(Nav);
